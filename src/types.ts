@@ -66,3 +66,45 @@ export interface AuditEntry {
   detail: string
   createdAt: string
 }
+
+export type RestorationStatus = '待复核' | '已恢复' | '已驳回' | '已作废'
+
+export interface RestorationConflict {
+  operator: string
+  decision: '恢复限速' | '驳回申请'
+  expectedVersion: number
+  currentVersion: number
+  attemptedAt: string
+}
+
+export interface SpeedRestorationRequest {
+  id: string
+  segmentId: string
+  status: RestorationStatus
+  keptTemporarySpeedLimit: number
+  restoreSpeedLimit: number
+  trigger: string
+  createdAt: string
+  decidedAt?: string
+  decidedBy?: string
+  voidReason?: string
+  version: number
+  conflicts: RestorationConflict[]
+  batchId: string
+}
+
+export interface PersistedState {
+  stateVersion: number
+  segments: TrackSegment[]
+  defects: Defect[]
+  audit: AuditEntry[]
+  restorations: SpeedRestorationRequest[]
+  appliedBatches: string[]
+}
+
+export interface BatchJournalEntry {
+  batchId: string
+  createdAt: string
+  status: '待恢复' | '已提交'
+  payload: PersistedState
+}

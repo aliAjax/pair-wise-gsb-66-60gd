@@ -12,15 +12,16 @@ const retest = reactive({ measuredValue: 0, tester: '王磊', note: '' })
 const message = ref('')
 function addAction() {
   if (!defect.value || !action.note) return
-  store.addAction(defect.value.id, { ...action, method: action.method as any, recordedAt: new Date().toISOString() })
+  const result = store.addAction(defect.value.id, { ...action, method: action.method as any, recordedAt: new Date().toISOString() })
   action.note = ''
+  message.value = result.message
 }
 function addRetest() {
   if (!defect.value) return
   const round = defect.value.retests.length + 1
   const passed = retest.measuredValue <= defect.value.limit
-  store.addRetest(defect.value.id, { round, passed, measuredValue: retest.measuredValue, limit: defect.value.limit, note: retest.note || (passed ? '复测合格' : '仍超过限值'), tester: retest.tester, testedAt: new Date().toISOString() })
-  message.value = passed ? '复测通过，缺陷已关闭' : '复测不合格，任务重新进入整治'
+  const result = store.addRetest(defect.value.id, { round, passed, measuredValue: retest.measuredValue, limit: defect.value.limit, note: retest.note || (passed ? '复测合格' : '仍超过限值'), tester: retest.tester, testedAt: new Date().toISOString() })
+  message.value = result.message
 }
 function closeDefect() {
   if (!defect.value) return

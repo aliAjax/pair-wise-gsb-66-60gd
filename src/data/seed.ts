@@ -1,4 +1,4 @@
-import type { AuditEntry, Defect, GeometryMeasurement, TrackSegment } from '../types'
+import type { AuditEntry, Defect, GeometryMeasurement, SpeedRestorationRequest, TrackSegment } from '../types'
 
 const measurements = (start: number, values: number[]): GeometryMeasurement[] => values.map((value, index) => ({
   id: `GM-${start + index * 200}`,
@@ -13,7 +13,7 @@ const measurements = (start: number, values: number[]): GeometryMeasurement[] =>
 
 export const seedSegments: TrackSegment[] = [
   { id: 'SEG-K102', line: '京广上行 K102', startMileage: 102000, endMileage: 104800, speedLimit: 160, temporarySpeedLimit: 120, version: 4, measurements: measurements(102000, [1433, 1435, 1438, 1443, 1447, 1444, 1437, 1434, 1436, 1439, 1442, 1439, 1435, 1433]) },
-  { id: 'SEG-K208', line: '沪昆下行 K208', startMileage: 208000, endMileage: 210600, speedLimit: 200, version: 3, measurements: measurements(208000, [1434, 1433, 1435, 1432, 1431, 1433, 1436, 1438, 1437, 1435, 1434, 1432, 1433, 1434]) }
+  { id: 'SEG-K208', line: '沪昆下行 K208', startMileage: 208000, endMileage: 210600, speedLimit: 200, temporarySpeedLimit: 140, version: 3, measurements: measurements(208000, [1434, 1433, 1435, 1432, 1431, 1433, 1436, 1438, 1437, 1435, 1434, 1432, 1433, 1434]) }
 ]
 
 export const seedDefects: Defect[] = [
@@ -33,8 +33,17 @@ export const seedDefects: Defect[] = [
   }
 ]
 
+export const seedRestorations: SpeedRestorationRequest[] = [
+  {
+    id: 'SR-SEG-K208-1', segmentId: 'SEG-K208', status: '待复核',
+    keptTemporarySpeedLimit: 140, restoreSpeedLimit: 200, trigger: '一级缺陷清零',
+    createdAt: '2026-09-29T06:40:00', version: 1, conflicts: [], batchId: 'B-SEED-01'
+  }
+]
+
 export const seedAudit: AuditEntry[] = [
   { id: 'A-1', entityId: 'SEG-K102', action: '导入检测数据', operator: 'GJ-6轨检车', detail: '导入K102+000至K104+800共14个采样点', createdAt: '2026-09-29T02:00:00' },
   { id: 'A-2', entityId: 'GD-260929-01', action: '批量派工', operator: '调度员 方林', detail: '超限点分配至工务一工区，要求24小时内整治', createdAt: '2026-09-29T04:15:00' },
-  { id: 'A-3', entityId: 'GD-260929-02', action: '提交复测', operator: '王磊', detail: '第1轮复测未通过，重新进入整治', createdAt: '2026-09-29T11:30:00' }
+  { id: 'A-3', entityId: 'GD-260929-02', action: '提交复测', operator: '王磊', detail: '第1轮复测未通过，重新进入整治', createdAt: '2026-09-29T11:30:00' },
+  { id: 'A-4', entityId: 'SR-SEG-K208-1', action: '生成限速恢复申请', operator: '系统', detail: '沪昆下行 K208一级缺陷清零，临时限速140 km/h保持，待调度复核', createdAt: '2026-09-29T06:40:00' }
 ]

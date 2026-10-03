@@ -38,6 +38,7 @@ function assign() {
       <article><span>超限缺陷</span><strong>{{ store.defects.length }}</strong><small>含已关闭项</small></article>
       <article><span>一级缺陷</span><strong>{{ store.defects.filter((item) => item.severity === '一级' && item.status !== '已关闭').length }}</strong><small>需限速联查</small></article>
       <article><span>待复测</span><strong>{{ store.defects.filter((item) => item.status === '待复测' || item.status === '复测不合格').length }}</strong><small>至少完成一轮复测</small></article>
+      <article><span>待复核申请</span><strong>{{ store.pendingRestorations.length }}</strong><small>限速恢复待调度确认</small></article>
       <article><span>区段版本</span><strong>{{ store.segments.reduce((sum, item) => sum + item.version, 0) }}</strong><small>每次整治递增</small></article>
     </div>
     <div class="toolbar">
