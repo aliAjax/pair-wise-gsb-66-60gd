@@ -6,7 +6,7 @@ const store = useTrackStore()
 const keyword = ref('')
 const rows = computed(() => store.audit.filter((item) => `${item.entityId} ${item.action} ${item.operator} ${item.detail}`.includes(keyword.value)))
 function exportReport() {
-  const payload = { generatedAt: new Date().toISOString(), segments: store.segments, defects: store.defects, audit: store.audit }
+  const payload = { generatedAt: new Date().toISOString(), segments: store.segments, defects: store.defects, recoveryApplications: store.recoveryApplications, conflicts: store.conflicts, journal: store.journal, audit: store.audit }
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
   const url = URL.createObjectURL(blob); const anchor = document.createElement('a'); anchor.href = url; anchor.download = '轨道几何整治报告.json'; anchor.click(); URL.revokeObjectURL(url)
 }

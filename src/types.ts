@@ -13,6 +13,15 @@ export interface GeometryMeasurement {
   detector: string
 }
 
+export interface SpeedLimitChange {
+  id: string
+  speedLimit: number
+  temporarySpeedLimit?: number
+  reason: string
+  operator: string
+  changedAt: string
+}
+
 export interface TrackSegment {
   id: string
   line: string
@@ -22,6 +31,7 @@ export interface TrackSegment {
   temporarySpeedLimit?: number
   version: number
   measurements: GeometryMeasurement[]
+  speedLimitChanges?: SpeedLimitChange[]
 }
 
 export interface RectificationAction {
@@ -39,6 +49,8 @@ export interface RetestResult {
   note: string
   tester: string
   testedAt: string
+  corrected?: boolean
+  correctedFrom?: RetestResult
 }
 
 export interface Defect {
@@ -58,6 +70,42 @@ export interface Defect {
   version: number
 }
 
+export type RecoveryStatus = '待复核' | '已生效' | '已作废'
+
+export interface RecoveryApplication {
+  id: string
+  segmentId: string
+  /** 申请提出时刻仍在执行的临时限速，复核通过前保持不变 */
+  heldTemporarySpeedLimit?: number
+  formalSpeedLimit: number
+  status: RecoveryStatus
+  basis: {
+    closedLevelOneDefectIds: string[]
+    /** 清零时各一级缺陷复测结论指纹，用于识别"晚到的复测更正" */
+    retestSignatures: Record<string, string>
+  }
+  reason: string | null
+  createdAt: string
+  createdBy: string
+  /** 乐观并发：处置/复核必须基于该版本提交 */
+  version: number
+  reviewedAt?: string
+  reviewedBy?: string
+}
+
+export interface ProcessingConflict {
+  id: string
+  applicationId: string
+  segmentId: string
+  winner: string
+  loser: string
+  detail: string
+  expectedVersion: number
+  actualVersion: number
+  createdAt: string
+  resolved: boolean
+}
+
 export interface AuditEntry {
   id: string
   entityId: string
@@ -65,4 +113,5 @@ export interface AuditEntry {
   operator: string
   detail: string
   createdAt: string
+  batchId?: string
 }
